@@ -19,8 +19,9 @@ int main( int argc, char** argv )
 {
     if(argc != 2)
     {
-     cout << "Usage: main.exe [IMAGE URL]" << endl;
-     return -1;
+        // Show the error message
+        cout << "Usage: main.exe [IMAGE URL]" << endl;
+        return -1;
     }
 
     // Read the image
@@ -29,7 +30,9 @@ int main( int argc, char** argv )
     // Check for invalid input
     if(!src.data)
     {
-        cout << argv[1] << endl ;
+        // Show the path of the image file
+        cout << argv[1] << endl;
+        // Show the error message
         cout << "Could not open or find the image" << endl ;
         return -1;
     }
@@ -46,14 +49,17 @@ int main( int argc, char** argv )
 
     // Create the binary image
     Mat src_binary;
+
     // Apply threshold operation to discard the objects whose color are not white
     threshold( src_gray, src_binary, 205, 255, THRESH_BINARY );
 
     // Create the dilation imaging
     // more information --> http://homepages.inf.ed.ac.uk/rbf/HIPR2/dilate.htm
     Mat src_dilation;
+
     // Create the dilation kernel
     Mat dilation_element = getStructuringElement(MORPH_ELLIPSE, Size(2 * DILATION_SIZE, 2 * DILATION_SIZE), Point(DILATION_SIZE, DILATION_SIZE));
+
     // Dilate the binary image
     dilate(src_binary, src_dilation, dilation_element);
 
@@ -73,8 +79,10 @@ int main( int argc, char** argv )
         {
             // Create the blob
             Mat label;
+
             // Extract the current blob from the image
             compare(labels, i, label, CMP_EQ);
+
             // Delete the current blob from the image, because it is connected to the border
             src_dilation = src_dilation - label;
         }
@@ -83,8 +91,10 @@ int main( int argc, char** argv )
     // Create the erosion imaging
     // more information --> http://homepages.inf.ed.ac.uk/rbf/HIPR2/erode.htm
     Mat src_erosion;
+
     // Create the erosion kernel
     Mat erosion_element = getStructuringElement(MORPH_ELLIPSE, Size(2 * EROSION_SIZE, 2 * EROSION_SIZE), Point(EROSION_SIZE, EROSION_SIZE));
+
     // Erode the binary image
     erode(src_dilation, src_erosion, erosion_element);
 
@@ -115,6 +125,7 @@ int main( int argc, char** argv )
     // Show our image inside it
     imshow("Output Image", src);
 
+    // Write the output image
     imwrite("images/output.jpg", src);
 
     // Wait for a keystroke in the window
